@@ -26,7 +26,7 @@ export type StartSSOFlowReturnType = {
   authSessionResult?: WebBrowser.WebBrowserAuthSessionResult;
 };
 
-export function useSSO(useSSOParams: UseSSOParams) {
+export function useSSO(useSSOParams: UseSSOParams = {}) {
   const { signIn, setActive, isLoaded: isSignInLoaded } = useSignIn();
   const { signUp, isLoaded: isSignUpLoaded } = useSignUp();
 
@@ -52,15 +52,19 @@ export function useSSO(useSSOParams: UseSSOParams) {
       });
 
     await signIn.create({
-      strategy: "enterprise_sso",
+      strategy: "oauth_google",
       redirectUrl,
-      identifier: startSSOFlowParams.identifier,
     });
 
     const { externalVerificationRedirectURL } = signIn.firstFactorVerification;
     if (!externalVerificationRedirectURL) {
       throw Error("Missing external verification redirect URL for SSO flow");
     }
+
+    console.log("WebBrowser.openAuthSessionAsync args", {
+      externalVerificationRedirectURL,
+      redirectUrl,
+    });
 
     // Redirects to authorization server and applies deep linking back to `redirectUrl`
     const authSessionResult = await WebBrowser.openAuthSessionAsync(

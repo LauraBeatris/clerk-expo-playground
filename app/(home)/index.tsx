@@ -1,16 +1,17 @@
-import { SignedIn, SignedOut, useUser, useOAuth } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { Link } from "expo-router";
 import { Button, Text, View } from "react-native";
 import * as Linking from "expo-linking";
+import { useSSO } from "@/hooks/useSSO";
 
 export default function Page() {
   const { user } = useUser();
-  const { startOAuthFlow } = useOAuth({
-    strategy: "oauth_google",
-  });
+  const { startFlow } = useSSO();
+
+  console.log(Linking.createURL("dashboard"));
 
   const handleSSO = () => {
-    startOAuthFlow({
+    startFlow({
       redirectUrl: Linking.createURL("dashboard"),
     });
   };
